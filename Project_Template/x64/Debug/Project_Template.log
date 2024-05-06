@@ -1,0 +1,8 @@
+﻿  main.cpp
+C:\Users\grogf\OneDrive\Documents\Games Development\Year 3\COMP3015 - Games Graphics Pipeline\30% github\COMP3015-30-\Project_Template\helper\scenerunner.h(202,16): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\grogf\OneDrive\Documents\Games Development\Year 3\COMP3015 - Games Graphics Pipeline\30% github\COMP3015-30-\Project_Template\helper\scenerunner.h(206,16): warning C4305: '=': truncation from 'double' to 'float'
+  scenebasic_uniform.cpp
+C:\Users\grogf\OneDrive\Documents\Games Development\Year 3\COMP3015 - Games Graphics Pipeline\30% github\COMP3015-30-\Project_Template\helper\scenerunner.h(202,16): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\grogf\OneDrive\Documents\Games Development\Year 3\COMP3015 - Games Graphics Pipeline\30% github\COMP3015-30-\Project_Template\helper\scenerunner.h(206,16): warning C4305: '=': truncation from 'double' to 'float'
+  Generating Code...
+  Project_Template.vcxproj -> C:\Users\grogf\OneDrive\Documents\Games Development\Year 3\COMP3015 - Games Graphics Pipeline\30% github\COMP3015-30-\Project_Template\x64\Debug\Project_Template.exe
