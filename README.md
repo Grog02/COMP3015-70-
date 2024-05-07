@@ -12,6 +12,8 @@ This is an OpenGL project created using Windows 11 and Visual Studio 2022
 Follow this file path and run Project_Template.exe
 
 ## The Scene
+## ![image](https://github.com/Grog02/COMP3015-70-/assets/91668510/1107b109-57ba-44fc-961c-21bff5c3d40c)
+
 When the .exe file is executed, there will be a snow-covered mountain with Toon Shading and Edge Detection. 
 Controls are shown down below for how to navigate it. 
 
