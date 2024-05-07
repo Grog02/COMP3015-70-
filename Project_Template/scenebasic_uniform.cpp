@@ -68,51 +68,68 @@ void SceneBasic_Uniform::initScene()
 
 	setupFBO();
 
-	GLfloat verts[] = {
+
+	// Vertex Coords
+	GLfloat vertexCoords[] = {
 		-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
 		-1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f,
 	};
 
-	GLfloat tc[] = {
+	// Texture Coords
+	GLfloat textureCoords[] = {
 		1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 		1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 	};
 
+	// Generate  buffer objects 
 	unsigned int handle[2];
 	glGenBuffers(2, handle);
+
+	// Bind 1st buffer
 	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
-	glBufferData(GL_ARRAY_BUFFER, 6 * 3 * sizeof(float), verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 6 * 3 * sizeof(float), vertexCoords, GL_STATIC_DRAW);
 
+	// Bind 2nd buffer
 	glBindBuffer(GL_ARRAY_BUFFER, handle[1]);
-	glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), tc, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), textureCoords, GL_STATIC_DRAW);
 
+	// Generate  VAO and add vertex values and bind it
 	glGenVertexArrays(1, &fsQuad);
 	glBindVertexArray(fsQuad);
 
+	// Enable 1st VAO 
 	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
 	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
+	// Enable 2nd VAO
 	glBindBuffer(GL_ARRAY_BUFFER, handle[1]);
 	glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(2);
 
+	// Unbind Vertex Array 
 	glBindVertexArray(0);
 
+	// Threshold for edge detection, light intensity and ambient light intensity set here
 	prog.setUniform("EdgeThreshold", 0.13f);
 	prog.setUniform("Light.L", vec3(0.9f));
 	prog.setUniform("Light.La", vec3(0.5f));
+
+	
 	
 }
 // Compile and link Shaders
 void SceneBasic_Uniform::compile()
 {
-	try {
+	try
+	{
 		prog.compileShader("shader/basic_uniform.vert");
 		prog.compileShader("shader/basic_uniform.frag");
 		prog.link();
 		prog.use();
-	} catch (GLSLProgramException &e) {
+	}
+	catch (GLSLProgramException &e)
+	{
 		cerr << e.what() << endl;
 		exit(EXIT_FAILURE);
 	}
@@ -120,35 +137,48 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::setupFBO()
 {
+	// Generate and bind FrameBuffer Object (FBO)
 	glGenFramebuffers(1, &fboHandle);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboHandle);
 
+	// Generate and bind texture 
 	glGenTextures(1, &renderTex);
 	glBindTexture(GL_TEXTURE_2D, renderTex);
 
+	// Storage for texture with mipmap level, RGBA, width and height
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
 
+	// Texture filtering parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 
+	// Attatch texture to FBO 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTex, 0);
 
+	// Generate, bind and configure Renderbuffer 
 	GLuint depthBuf;
 	glGenRenderbuffers(1, &depthBuf);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf);
 
+	//  List of colour buffers to be drawn into
 	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
 	glDrawBuffers(1, drawBuffers);
 	GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (result == GL_FRAMEBUFFER_COMPLETE) {
+
+	// Is	Framebuffer complete
+	if (result == GL_FRAMEBUFFER_COMPLETE) 
+	{
 		std::cout << "Frame buffer is complete!" << std::endl;
 	}
-	else {
+	else 
+	{
 		std::cout << "Frame buffer error! : " << result << std::endl;
 	}
+
+	// Unbind Framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -164,8 +194,7 @@ void SceneBasic_Uniform::pass1()
 	projection = glm::perspective(glm::radians(100.0f), (float)width / height, 0.3f, 100.0f);
 	// update light position based on current angle
 	vec4 lightPos = vec4(10.0f * cos(angle), 10.0f, 10.0f * sin(angle), 1.0f);
-
-	prog.setUniform("Light.Position", vec4(view * lightPos));
+	prog.setUniform("Light.Position", (view * lightPos));
 
 	// set material properties 
 	prog.setUniform("Material.Kd", vec3(0.2f, 0.55f, 0.9f));
@@ -199,22 +228,37 @@ void SceneBasic_Uniform::pass1()
 
 void SceneBasic_Uniform::pass2()
 {
+	// Set uniform for 2nd rendering pass
 	prog.setUniform("Pass", 2);
 
+	// Bind default Framebuffer to render
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Activate texture 0
 	glActiveTexture(GL_TEXTURE0);
+
+	// Bind texture 
 	glBindTexture(GL_TEXTURE_2D, renderTex);
+
+	// Disable depth testing
 	glDisable(GL_DEPTH_TEST);
+
+	// Clear colour buffer
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// Reset transform values
 	model = mat4(1.0f);
 	view = mat4(1.0f);
 	projection = mat4(1.0f);
 
+	// Apply transform matrices 
 	setMatrices();
 
+	// Bind VAO 
 	glBindVertexArray(fsQuad);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Unbind VAO
 	glBindVertexArray(0);
 }
 
@@ -228,8 +272,11 @@ void SceneBasic_Uniform::update( float t, glm::vec3 Orientation, glm::vec3 Posit
 		deltaT = 0.0f;
 	}
 	tPrev = t;
-	angle += 0.1f * deltaT;
-	if (angle > glm::two_pi<float>())angle -= glm::two_pi<float>();
+	angle += 0.25f * deltaT;
+	if (angle > glm::two_pi<float>())
+	{
+		angle -= glm::two_pi<float>();
+	}
 	prog.setUniform("ViewMatrix", view);
 	view = glm::lookAt(Position, Position + Orientation, Up);
 	
@@ -240,6 +287,7 @@ void SceneBasic_Uniform::update( float t, glm::vec3 Orientation, glm::vec3 Posit
 // Render scene
 void SceneBasic_Uniform::render()
 {
+	// Call the necessary methods
 	pass1();
 	glFlush();
 	pass2();	
