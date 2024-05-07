@@ -20,13 +20,21 @@ Controls are shown down below for how to navigate it.
 
 ## Controls
 W - Move camera forward
+
 A - Move camera left
+
 S - Move camera backward
+
 D - Move camera right
+
 Up Arrow - Move camera up
+
 Down Arrow - Move camera down
+
 Left Click (hold) - Rotate camera and hides mouse cursor
+
 Left Click (release) - resets the mouse cursor position to the middle of the window and shows the cursor
+
 
 # References
 ## [polyhaven.com/textures](url)
